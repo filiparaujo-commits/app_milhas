@@ -65,27 +65,25 @@
 
   // ── Expõe para o escopo global ─────────────────────
   window._firebase = {
-    auth, provider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged,
+    auth, provider, signInWithRedirect, signOut,
     carregarHistorico, salvarRegistro, deletarRegistro, limparTudo,
-    setCurrentUser: (u) => { currentUser = u; window._firebase.currentUser = u; }
+    currentUser: null
   };
-  window._firebase.currentUser = null;
-
-  // ── Trata retorno do redirect ──────────────────────
-  try {
-    const result = await getRedirectResult(auth);
-    // Se veio de um redirect, o onAuthStateChanged já cuida do resto
-  } catch (e) {
-    console.error('Erro no redirect result:', e);
-  }
 
   // ── Auth state listener ────────────────────────────
+  // onAuthStateChanged cobre tanto login normal quanto retorno do redirect
   onAuthStateChanged(auth, async (user) => {
-    window._firebase.setCurrentUser(user);
+    console.log('Auth state:', user ? user.email : 'deslogado');
+    window._firebase.currentUser = user;
+
     if (user) {
-      // Carrega histórico do Firestore
-      const dados = await carregarHistorico(user.uid);
-      window._appSetHistory(dados);
+      try {
+        const dados = await carregarHistorico(user.uid);
+        window._appSetHistory(dados);
+      } catch(e) {
+        console.error('Erro ao carregar histórico:', e);
+        window._appSetHistory([]);
+      }
       window._appOnLogin(user);
     } else {
       window._appOnLogout();
