@@ -17,7 +17,7 @@
   // ── Firebase config ────────────────────────────────
   const firebaseConfig = {
     apiKey:            "AIzaSyADs9yN-WCgfZWpRjARd4JgmstAQQkMLSE",
-    authDomain:        "filiparaujo-commits.github.io",
+    authDomain:        "app-milhas-4440f.firebaseapp.com",
     projectId:         "app-milhas-4440f",
     storageBucket:     "app-milhas-4440f.firebasestorage.app",
     messagingSenderId: "619852232899",
@@ -629,15 +629,9 @@
 
   // ── Auth ───────────────────────────────────────────
   function fazerLogin() {
-    if (!window._firebase) {
-      setTimeout(fazerLogin, 100);
-      return;
-    }
-    const { auth, provider, signInWithPopup } = window._firebase;
-    signInWithPopup(auth, provider).catch(e => {
-      console.error(e);
-      alert('Erro ao fazer login. Tente novamente.');
-    });
+    if (!window._firebase) { setTimeout(fazerLogin, 100); return; }
+    window._firebase.signInWithPopup(window._firebase.auth, window._firebase.provider)
+      .catch(e => { console.error(e); alert('Erro ao fazer login. Tente novamente.'); });
   }
 
   function fazerLogout() {
